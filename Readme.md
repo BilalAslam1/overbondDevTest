@@ -3,8 +3,8 @@
 To execute the program:
 
 - Install node on your machine
-- Run '''npm install''' to get all the node modules
-- Run '''node index.js''' to get the results
+- Run npm install to get all the node modules
+- Run node index.js to get the results
 
 ## Thought Process for Challenge 1
 
