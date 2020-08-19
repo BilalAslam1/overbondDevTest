@@ -1,88 +1,56 @@
 # Coding Challenge
 
-Here are two exercises that will give us some insight into your coding and problem solving abilities. 
+To execute the program:
 
-## Challenge #1
+- Install node on your machine
+- Run '''npm install''' to get all the node modules
+- Run '''node index.js''' to get the results
 
-Calculate the yield spread (return) between a corporate bond and its government bond benchmark. 
+## Thought Process for Challenge 1
 
-A government bond is a good benchmark if it is as close as possible to the corporate bond in terms of years to maturity (term).
+I noticed the sample input was sorted by term for corporate bonds and government bonds. Assuming the file was always sorted, I decided to use binary search to find the closest government bond based on term for a given corporate bond. This meant I needed to converted the government bond years to an array for computation. I prioritized time complexitity over space as in a financial buisness time complexity would matter more. I could have used a brute force approach for better space complexity but that would have added to the time complexity.
 
-### Sample input
-
-| bond   | type       | term        | yield |
-|--------|------------|-------------|-------|
-| C1     | corporate  | 10.3 years  | 5.30% |
-| G1     | government | 9.4 years   | 3.70% |
-| G2     | government | 12 years    | 4.80% |
-
-### Sample output
+### Sample Output
 
 ```
-bond,benchmark,spread_to_benchmark
-C1,G1,1.60%
+'bond','benchmark','spread_to_benchmark',
+[ 'C1', 'G1', '1.60' ],
+[ 'C2', 'G2', '1.50' ],
+[ 'C3', 'G3', '2.00' ],
+[ 'C4', 'G3', '2.90' ],
+[ 'C5', 'G4', '0.90' ],
+[ 'C6', 'G5', '1.80' ],
+[ 'C7', 'G6', '2.50' ]
 ```
 
-To explain, the best candidate for a benchmark for C1 (corporate bond) is the G1 (government bond) since their difference in term is only 0.9 years vs G2 that is 1.7 years away. Hence, the `spread_to_benchmark` for C1 is C1.yield - G1.yield = 1.60%.
+## Thought Process for Challenge 2
 
-Given a list of corporate and government bonds, find a benchmark bond for each corporate bond and calculate the spread to benchmark.
+If you have the closest government bond term to the corporate bond term. Then finding the 2 closest government bond terms such that the first one is smaller than corporate bond term and the second one is larger is straightforward. This is because the array is sorted already and thus the 2 terms would be consecutive. Hence, this challenge is built up of the last one. Therefore, I decided to pass that information about the closest government bond term for each corporate bond in an array to the main function and then into calculateSpreadToCurve as a parameter. This was done to avoid doing the same calculation again. As in a full scale envrionment you would want to avoid that at all costs especially for it to scale well. However, it might have made the code harder to read.
 
-## Challenge #2
+Using the closest array the smaller and larger government bond were found and that information used in the interpolation formuala to find the corresponding government bond yield. This was substracted from the corporate bond yield to find spread to curve.
 
-The next challenge is calculate the spread to the government bond curve.
-
-Since the corporate bond term is not exactly the same as its benchmark term, we need to use linear interpolation to dermine the spread to the curve.
-
-### Sample input
-
-| bond   | type       | term        | yield |
-|--------|------------|-------------|-------|
-| C1     | corporate  | 10.3 years  | 5.30% |
-| C2     | corporate  | 15.2 years  | 8.30% |
-| G1     | government | 9.4 years   | 3.70% |
-| G2     | government | 12 years    | 4.80% |
-| G3     | government | 16.3 years  | 5.50% |
-
-### Sample output
+### Sample Output
 
 ```
-bond,spread_to_curve
-C1,1.22%
-C2,2.98%
+'bond','spread_to_curve',
+  [ 'C1', '1.43' ],
+  [ 'C2', '1.63' ],
+  [ 'C3', '2.47' ],
+  [ 'C4', '2.27' ],
+  [ 'C5', '1.90' ],
+  [ 'C6', '1.57' ],
+  [ 'C7', '2.83' ]
 ```
 
-Image below (attached) will help you visualize how to calculate spread to curve. The formula is:
+## Technical Choices
 
-```
-C1.spread_to_curve = A - B
-C2.spread_to_curve = X - Y
-```
+- I decided to use node.js as I'm familiar with it. Also, it has a lot of npm packages available include neat-csv which I used to read the data.
+- Neat csv package is a small and fast csv parser. Thus, it wouldn't hinder the performance of the application
+- I used async functions as they'd be better in a production environment. Also, because I use computations from Challenge1 in Challenge2
 
-Where `A = C1.yield = 5.30%` and `X = C2.yield = 8.30%`. Values of B and Y require linear interpolation to determine. We leave this as an exercise to the challenger.
+### Additional Functionalities
 
-You can assume that the list of bonds will always contain at least one government bond with a term less all the corporate bonds. As well, it will contain at least one government bond with a term greater than all the corporate bonds. So that you will always be able to calculate `spread_to_curve` for each corporate bond.
-
-## Technical spec
-
-Use any language with which you are most comfortable. Overbond is a Rails shop, so if you can write the solution in Ruby, great! But it's not required.
-
-No UI is necessary. You can read and write the output to standard in/out. Make sure it's easy to provide specific files for the application to process and calculate results for.
-
-Please organize, design, test and document your code as if it were going into production. Write your README as if it was for a production service and include the following items:
-
-* Reasoning behind your technical choices
-* Trade-offs you might have made or what you might do differently if you were to spend additional time on the project
-
-## How we review
-
-Remember, this is production level code. The aspects of your code we will judge include:
-
-* **Functionality**: Does the application do what was asked?
-* **Code quality**: Is the code simple and easy to understand?
-* **Testing**: Are there automated tests? Do they provide sufficient coverage?
-* **Technical choices**: Do choices of libraries, frameworks, etc. seem appropriate for the chosen application?
-* **Documentation**: Is a README file included? Does it specify how to execute the app? Does it describe your approach sufficiently?
-
-## Submission
-
-Email us a zip file containing your solution. Alternatively, create a Github repo. If you decide to make the repo private, add @overbondeng as a collaborator. 
+- Create a GUI to be able to better understand the data
+- Create more thorough automated tests
+- More thorough edge cases as well
+- Further compartmentilization as project grows. Not having all functions in one index.js file
